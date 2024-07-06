@@ -1,0 +1,28 @@
+version: 0.1
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo "Installing dependencies..."
+      - pip install pyyaml requests google-auth-oauthlib google-auth-httplib2 google-api-python-client pytz
+
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase..."
+
+  build:
+    commands:
+      - echo "Build phase..."
+      - echo "Running the script..."
+      - python main.py
+
+  post_build:
+    commands:
+      - echo "Post-build phase..."
+
+artifacts:
+  files:
+    - '**/*'
