@@ -91,6 +91,7 @@ def create_event(service, conference):
         'location': conference['place'],
         'start': {'dateTime': deadline.isoformat()},
         'end': {'dateTime': (deadline + timedelta(minutes=1)).isoformat()},
+        'transparency': 'transparent'
     }
 
     conference_event = {
@@ -99,6 +100,7 @@ def create_event(service, conference):
         'location': conference['place'],
         'start': {'date': start_date.isoformat()},
         'end': {'date': end_date.isoformat()},
+        'transparency': 'transparent'
     }
 
     if event_exists(event=deadline_event, service=service, calendar_id=CALENDAR_ID):
