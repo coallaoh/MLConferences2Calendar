@@ -12,7 +12,7 @@ import pytz
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 CONFERENCES = ("coling", "neurips [dataset and benchmarks track]", "aaai", "emnlp", "neurips", "acl", "uai", "colm",
                "eccv", "naacl", "cscw", "aistats", "wacv", "icassp", "3dv", "chi", "iclr", "iccv", "eacl",
-               "interspeech", "wacv", "bmvc", "facct")
+               "interspeech", "wacv", "bmvc", "facct", "cvpr", "icml")
 CALENDAR_ID = "stai.there@gmail.com"
 SOURCE_YAML_URL = 'https://raw.githubusercontent.com/paperswithcode/ai-deadlines/gh-pages/_data/conferences.yml'
 CUTOFF_YEAR = 2024
