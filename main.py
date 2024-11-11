@@ -18,12 +18,15 @@ CONFERENCES = ("coling", "neurips [dataset and benchmarks track]", "aaai", "emnl
                "eccv", "naacl", "cscw", "aistats", "wacv", "icassp", "3dv", "chi", "iclr", "iccv", "eacl",
                "interspeech", "wacv", "bmvc", "facct", "cvpr", "icml")
 CALENDAR_ID = "stai.there@gmail.com"
-SOURCE_YAML_URL = 'https://raw.githubusercontent.com/paperswithcode/ai-deadlines/gh-pages/_data/conferences.yml'
+SOURCE_YAML_URL = 'https://raw.githubusercontent.com/paperswithcode/ai-deadlines/refs/heads/gh-pages/_data/conferences.yml'
 CUTOFF_YEAR = 2024
 
 
 def get_calendar_service():
     credentials_json = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+    if not credentials_json:
+        logging.error("Google application credentials not found in environment variables.")
+        return None
     credentials_info = json.loads(credentials_json)
     credentials = service_account.Credentials.from_service_account_info(
         credentials_info, scopes=['https://www.googleapis.com/auth/calendar'])
@@ -123,7 +126,11 @@ def main():
     service = get_calendar_service()
     response = requests.get(SOURCE_YAML_URL)
     logging.info(f"Response status code: {response.status_code}")
-    logging.info(f"Response text: {response.text}")
+    
+    if response.status_code != 200:
+        logging.error(f"Failed to fetch conferences: {response.text}")
+        return
+    
     conferences = yaml.safe_load(response.text)
     for conference in conferences:
         if conference['title'].lower() not in CONFERENCES:
