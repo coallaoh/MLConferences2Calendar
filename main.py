@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -8,6 +9,9 @@ import requests
 from datetime import datetime, timedelta
 from datetime import date as date_class
 import pytz
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 CONFERENCES = ("coling", "neurips [dataset and benchmarks track]", "aaai", "emnlp", "neurips", "acl", "uai", "colm",
@@ -67,7 +71,7 @@ def event_exists(service, calendar_id, event):
         events = events_result.get('items', [])
         return len(events) > 0
     except Exception as e:
-        print(f"Error checking for event existence: {e}")
+        logging.error(f"Error checking for event existence: {e}")
         return False
 
 
@@ -104,26 +108,29 @@ def create_event(service, conference):
     }
 
     if event_exists(event=deadline_event, service=service, calendar_id=CALENDAR_ID):
-        print(f"Event {conference['title']} Deadline already exists")
+        logging.info(f"Event {conference['title']} Deadline already exists")
     else:
         service.events().insert(calendarId=CALENDAR_ID, body=deadline_event).execute()
+        logging.info(f"Created event: {conference['title']} Deadline")
 
     if event_exists(event=conference_event, service=service, calendar_id=CALENDAR_ID):
-        print(f"Event {conference['title']} already exists")
+        logging.info(f"Event {conference['title']} already exists")
     else:
         service.events().insert(calendarId=CALENDAR_ID, body=conference_event).execute()
-
+        logging.info(f"Created event: {conference['title']}")
 
 def main():
     service = get_calendar_service()
     response = requests.get(SOURCE_YAML_URL)
+    logging.info(f"Response status code: {response.status_code}")
+    logging.info(f"Response text: {response.text}")
     conferences = yaml.safe_load(response.text)
     for conference in conferences:
         if conference['title'].lower() not in CONFERENCES:
             continue
         if conference['year'] < CUTOFF_YEAR:
             continue
-        print(f"Adding {conference['id']}...")
+        logging.info(f"Adding {conference['id']}...")
         create_event(service, conference)
 
 
